@@ -1,0 +1,15 @@
+{
+    "name": "gooseduckys",
+    "modelProvider": "grok",
+    "plugins": ["twitter"],
+    "settings": {
+        "twitter": {
+            "autoTweet": true,
+            "tweetInterval": "30m",
+            "randomizeInterval": true,
+            "retweet": false,
+            "tweetOnStart": true
+        }
+    }
+}
+
