@@ -208,13 +208,23 @@ export async function loadCharacters(
                 // Handle plugins
                 if (isAllStrings(character.plugins)) {
                     elizaLogger.info("Plugins are: ", character.plugins);
-                    const importedPlugins = await Promise.all(
-                        character.plugins.map(async (plugin) => {
-                            const importedPlugin = await import(plugin);
-                            return importedPlugin.default;
-                        })
-                    );
-                    character.plugins = importedPlugins;
+                    try {
+                        const importedPlugins = await Promise.all(
+                            character.plugins.map(async (plugin) => {
+                                try {
+                                    const importedPlugin = await import(plugin);
+                                    return importedPlugin.default;
+                                } catch (error) {
+                                    elizaLogger.error(`Error loading plugin ${plugin}: ${error.message}`);
+                                    return null;
+                                }
+                            })
+                        );
+                        character.plugins = importedPlugins.filter(Boolean); // Remove any null entries
+                    } catch (error) {
+                        elizaLogger.error(`Error loading plugins: ${error.message}`);
+                        character.plugins = [];
+                    }
                 }
 
                 loadedCharacters.push(character);
